@@ -1,0 +1,54 @@
+[project]
+name = "affilgood-reranking"
+version = "0.1.0"
+description = "Build gold-labelled ROR reranker datasets from raw affiliations."
+readme = "README.md"
+requires-python = ">=3.10"
+
+# Core dependencies: everything the three scripts + the existing
+# src/registry.py and src/ror_retrieval_experiments.py modules need.
+dependencies = [
+    # General
+    "pandas>=2.0",
+    "tqdm>=4.65",
+    "numpy>=1.24",
+
+    # Span / NER  (HuggingFace models via transformers + datasets)
+    "transformers>=4.40",
+    "datasets>=2.14",
+
+    # Retrievers
+    #   - sentence-transformers: DenseRetriever, CrossEncoderReranker
+    #   - scikit-learn:          TfidfRetriever
+    #   - rank-bm25:             BM25Retriever
+    #   - whoosh:                WhooshRetriever (BM25F)
+    #   - faiss-cpu:             precomputed-embeddings path (--faiss-dir)
+    "torch>=2.2",
+    "sentence-transformers>=3.0",
+    "scikit-learn>=1.3",
+    "rank-bm25>=0.2.2",
+    "whoosh>=2.7",
+    "faiss-cpu>=1.7.4",
+
+    # data_manager.ensure_data() uses this for cross-process locking
+    "filelock>=3.12",
+
+    # LLM annotation (Script 2)
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+# Jina v3 / multilingual embeddings need a handful of extras.
+jina = [
+    "einops>=0.7",
+]
+# Only needed if you actually use Qwen rerankers — heavy install.
+qwen = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
